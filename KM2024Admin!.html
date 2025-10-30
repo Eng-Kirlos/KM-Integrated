@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KM Integrated Services - خدمات متكاملة</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* الهيدر */
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            background: #f39c12;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #f39c12;
+        }
+
+        .admin-tab {
+            background: #e74c3c;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-right: 1rem;
+            cursor: pointer;
+        }
+
+        /* نافذة التحكم */
+        .control-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .control-panel {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+
+        .panel-content {
+            padding: 2rem;
+        }
+
+        .login-form {
+            text-align: center;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            margin: 1rem 0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .login-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .upload-area {
+            border: 2px dashed #3498db;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .upload-area:hover {
+            background: #f8f9fa;
+        }
+
+        .image-preview {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 1rem 0;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f8f9fa;
+            height: 100px;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .close-btn {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        /* باقي الستايلات */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), #34495e;
+            color: white;
+            text-align: center;
+            padding: 8rem 1rem 4rem;
+            margin-top: 60px;
+        }
+
+        .section {
+            padding: 4rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #2c3e50;
+            font-size: 2.2rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #3498db;
+        }
+
+        /* معرض الصور - معدل */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .portfolio-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #ecf0f1;
+            display: block;
+        }
+
+        .empty-gallery {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            color: #6c757d;
+        }
+
+        .contact-form {
+            background: white;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .submit-btn {
+            background: #27ae60;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #25D366;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links li:not(:last-child) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- الهيدر مع تاب التحكم -->
+    <header>
+        <nav class="nav-container">
+            <div class="logo-container">
+                <div class="logo-img">KM</div>
+                <div class="logo-text">KM Integrated Services</div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">الرئيسية</a></li>
+                <li><a href="#about">من نحن</a></li>
+                <li><a href="#services">خدماتنا</a></li>
+                <li><a href="#portfolio">معرض الأعمال</a></li>
+                <li><a href="#contact">اتصل بنا</a></li>
+                <li><div class="admin-tab" onclick="openControlPanel()">لوحة التحكم</div></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- نافذة التحكم -->
+    <div id="controlOverlay" class="control-overlay">
+        <div class="control-panel">
+            <div class="panel-header">
+                <h3>🔒 لوحة تحكم الموقع</h3>
+                <p>KM Integrated Services - Admin Panel</p>
+            </div>
+            <div class="panel-content">
+                <!-- شاشة الدخول -->
+                <div id="loginSection" class="login-form">
+                    <h4>أدخل كلمة المرور للوصول</h4>
+                    <input type="password" id="adminPassword" class="password-input" placeholder="أدخل كلمة المرور">
+                    <div id="passwordError" class="error-message">كلمة المرور خاطئة!</div>
+                    <button onclick="login()" class="login-btn">دخول</button>
+                    <!-- تم إزالة كلمة المرور الافتراضية من هنا -->
+                </div>
+
+                <!-- لوحة التحكم بعد الدخول -->
+                <div id="adminSection" class="admin-section">
+                    <!-- رفع اللوجو -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4>🖼️ رفع لوجو الشركة</h4>
+                        <div class="upload-area" onclick="triggerUpload('logo')">
+                            <div>📁</div>
+                            <p>انقر لرفع اللوجو</p>
+                            <small>مقاس 200x200 بكسل</small>
+                        </div>
+                    </div>
+
+                    <!-- رفع صور المعرض -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4>📸 معرض الصور الحالي</h4>
+                        <div class="image-preview" id="galleryPreview">
+                            <div class="empty-gallery" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                                لا توجد صور حالياً
+                            </div>
+                        </div>
+                        <div class="upload-area" onclick="triggerUpload('gallery')">
+                            <div>📁</div>
+                            <p>انقر لرفع صور جديدة</p>
+                            <small>يمكن رفع عدة صور معاً</small>
+                        </div>
+                    </div>
+
+                    <!-- تعديل المعلومات -->
+                    <div style="margin-bottom: 2rem;">
+                        <h4>📝 معلومات الشركة</h4>
+                        <input type="text" id="companyName" class="password-input" placeholder="اسم الشركة" value="KM Integrated Services">
+                        <input type="text" id="companyDescription" class="password-input" placeholder="وصف الشركة" value="خبرة 8 سنوات في مصر - والآن في الإمارات العربية المتحدة">
+                    </div>
+
+                    <button onclick="saveChanges()" class="login-btn">💾 حفظ التغييرات</button>
+                    <button onclick="closeControlPanel()" class="close-btn">إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الموقع الأساسي -->
+    <section class="hero" id="home">
+        <h1 id="siteTitle">شركة كي إم للخدمات المتكاملة</h1>
+        <p id="siteDescription">خبرة 8 سنوات في مصر - والآن في الإمارات العربية المتحدة</p>
+        <a href="#contact" class="cta-button">اطلب خدمتك الآن</a>
+    </section>
+
+    <!-- معرض الأعمال - معدل -->
+    <section class="section" id="portfolio">
+        <h2 class="section-title">معرض أعمالنا</h2>
+        <div class="portfolio-grid" id="portfolioGallery">
+            <div class="empty-gallery">
+                <h3>📸</h3>
+                <p>لا توجد صور في المعرض حالياً</p>
+                <small>سيتم إضافة صور لأعمالنا قريباً</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- باقي أقسام الموقع -->
+    <section class="section" id="services">
+        <h2 class="section-title">خدماتنا</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">⚡</div>
+                <h3>أعمال الكهرباء</h3>
+                <p>توصيلات وتأسيس كهرباء، تركيب إضاءة، أنظمة كهربائية متكاملة</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🎨</div>
+                <h3>أعمال النقاشة</h3>
+                <p>معجون ودهان الجدران، دهانات ديكورية، ورق جدران</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🧱</div>
+                <h3>أعمال السيراميك</h3>
+                <p>توريد وتركيب بلاط السيراميك والبورسلين للأرضيات والحوائط</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🏗️</div>
+                <h3>جبسوم بورد</h3>
+                <p>تصميم وتنفيذ الأسقف المعلقة، القواطع، تشطيبات جبسية</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="contact">
+        <h2 class="section-title">اتصل بنا</h2>
+        <div class="contact-form">
+            <form id="serviceForm">
+                <div class="form-group">
+                    <input type="text" placeholder="الاسم بالكامل" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="البريد الإلكتروني" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" placeholder="رقم الهاتف">
+                </div>
+                <div class="form-group">
+                    <select required>
+                        <option value="">اختر الخدمة...</option>
+                        <option value="electricity">أعمال الكهرباء</option>
+                        <option value="painting">أعمال النقاشة</option>
+                        <option value="ceramic">أعمال السيراميك</option>
+                        <option value="gypsum">أعمال الجبسوم بورد</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="وصف الطلب..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">إرسال الطلب</button>
+            </form>
+        </div>
+    </section>
+
+    <a href="https://wa.me/971504149420" class="whatsapp-float" target="_blank">
+        💬 تواصل على واتساب
+    </a>
+
+    <footer>
+        <p>KM Integrated Services - خدمات متكاملة منذ 2017</p>
+        <p>مصر | الإمارات العربية المتحدة</p>
+        <p>البريد الإلكتروني: j.kirlos.elia@gmail.com</p>
+        <p>واتساب: 971504149420+</p>
+    </footer>
+
+    <!-- ملفات الرفع المخفية -->
+    <input type="file" id="logoUpload" accept="image/*" style="display: none;">
+    <input type="file" id="galleryUpload" multiple accept="image/*" style="display: none;">
+
+    <script>
+        // 🔐 إعدادات النظام - كلمة المرور مخفية الآن
+        const ADMIN_PASSWORD = "KM2024Admin!"; // كلمة مرور قوية
+        let isAdmin = false;
+
+        // 📁 فتح لوحة التحكم
+        function openControlPanel() {
+            document.getElementById('controlOverlay').style.display = 'flex';
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('passwordError').style.display = 'none';
+        }
+
+        // 📁 إغلاق لوحة التحكم
+        function closeControlPanel() {
+            document.getElementById('controlOverlay').style.display = 'none';
+            isAdmin = false;
+        }
+
+        // 🔐 الدخول للنظام
+        function login() {
+            const password = document.getElementById('adminPassword').value;
+            const errorElement = document.getElementById('passwordError');
+            
+            if (password === ADMIN_PASSWORD) {
+                isAdmin = true;
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminSection').style.display = 'block';
+                errorElement.style.display = 'none';
+                loadExistingData();
+            } else {
+                errorElement.style.display = 'block';
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminPassword').focus();
+            }
+        }
+
+        // 📸 رفع الصور
+        function triggerUpload(type) {
+            if (!isAdmin) return;
+            
+            const input = type === 'logo' ? document.getElementById('logoUpload') : document.getElementById('galleryUpload');
+            input.onchange = function(e) {
+                if (type === 'logo') {
+                    handleLogoUpload(e.target.files[0]);
+                } else {
+                    handleGalleryUpload(e.target.files);
+                }
+            };
+            input.click();
+        }
+
+        // 🖼️ معالجة رفع اللوجو
+        function handleLogoUpload(file) {
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                localStorage.setItem('companyLogo', e.target.result);
+                updateSiteLogo();
+                alert('تم رفع اللوجو بنجاح!');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 🖼️ معالجة رفع معرض الصور
+        function handleGalleryUpload(files) {
+            if (!files.length) return;
+            
+            let gallery = JSON.parse(localStorage.getItem('companyGallery') || '[]');
+            
+            // تحديد الحد الأقصى للصور
+            if (gallery.length + files.length > 12) {
+                alert('يمكنك رفع最多 12 صورة فقط');
+                return;
+            }
+            
+            let uploadedCount = 0;
+            
+            for (let file of files) {
+                // التحقق من حجم الصورة
+                if (file.size > 2 * 1024 * 1024) { // 2MB
+                    alert(`الصورة ${file.name} حجمها كبير جداً. الحد الأقصى 2MB`);
+                    continue;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    gallery.push({
+                        src: e.target.result,
+                        name: file.name,
+                        date: new Date().toLocaleDateString()
+                    });
+                    uploadedCount++;
+                    
+                    if (uploadedCount === files.length) {
+                        localStorage.setItem('companyGallery', JSON.stringify(gallery));
+                        updateGallery();
+                        alert(`تم رفع ${uploadedCount} صورة بنجاح!`);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 💾 حفظ التغييرات
+        function saveChanges() {
+            if (!isAdmin) return;
+            
+            // حفظ معلومات الشركة
+            localStorage.setItem('companyName', document.getElementById('companyName').value);
+            localStorage.setItem('companyDescription', document.getElementById('companyDescription').value);
+            
+            // تحديث الموقع
+            updateWebsite();
+            alert('تم حفظ التغييرات بنجاح!');
+        }
+
+        // 🔄 تحديث الموقع
+        function updateWebsite() {
+            // تحديث العنوان والوصف
+            document.getElementById('siteTitle').textContent = `شركة ${localStorage.getItem('companyName') || 'كي إم للخدمات المتكاملة'}`;
+            document.getElementById('siteDescription').textContent = localStorage.getItem('companyDescription') || 'خبرة 8 سنوات في مصر - والآن في الإمارات العربية المتحدة';
+            
+            // تحديث اللوجو
+            updateSiteLogo();
+            
+            // تحديث المعرض
+            updateGallery();
+        }
+
+        // 🖼️ تحديث اللوجو
+        function updateSiteLogo() {
+            const logo = localStorage.getItem('companyLogo');
+            if (logo) {
+                const logoElement = document.querySelector('.logo-img');
+                logoElement.innerHTML = '';
+                logoElement.style.background = `url(${logo}) center/cover`;
+                logoElement.style.backgroundSize = 'cover';
+            }
+        }
+
+        // 🖼️ تحديث المعرض - معدل
+        function updateGallery() {
+            const gallery = JSON.parse(localStorage.getItem('companyGallery') || '[]');
+            const portfolioContainer = document.getElementById('portfolioGallery');
+            const previewContainer = document.getElementById('galleryPreview');
+            
+            // تحديث المعرض الرئيسي
+            portfolioContainer.innerHTML = '';
+            
+            if (gallery.length === 0) {
+                portfolioContainer.innerHTML = `
+                    <div class="empty-gallery">
+                        <h3>📸</h3>
+                        <p>لا توجد صور في المعرض حالياً</p>
+                        <small>سيتم إضافة صور لأعمالنا قريباً</small>
+                    </div>
+                `;
+            } else {
+                gallery.forEach((item, index) => {
+                    const imgElement = document.createElement('img');
+                    imgElement.className = 'portfolio-image';
+                    imgElement.src = item.src;
+                    imgElement.alt = `مشروع ${index + 1}`;
+                    imgElement.title = item.name;
+                    portfolioContainer.appendChild(imgElement);
+                });
+            }
+            
+            // تحديث المعرض المصغر في لوحة التحكم
+            previewContainer.innerHTML = '';
+            
+            if (gallery.length === 0) {
+                previewContainer.innerHTML = `
+                    <div class="empty-gallery" style="grid-column: 1 / -1; text-align: center; padding: 1rem;">
+                        لا توجد صور حالياً
+                    </div>
+                `;
+            } else {
+                gallery.forEach((item, index) => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+                    previewItem.innerHTML = `
+                        <img src="${item.src}" alt="صورة ${index + 1}">
+                        <button class="delete-btn" onclick="deleteImage(${index})">×</button>
+                    `;
+                    previewContainer.appendChild(previewItem);
+                });
+            }
+        }
+
+        // 🗑️ حذف صورة
+        function deleteImage(index) {
+            if (!isAdmin) return;
+            
+            if (!confirm('هل أنت متأكد من حذف هذه الصورة؟')) return;
+            
+            let gallery = JSON.parse(localStorage.getItem('companyGallery') || '[]');
+            gallery.splice(index, 1);
+            localStorage.setItem('companyGallery', JSON.stringify(gallery));
+            updateGallery();
+            alert('تم حذف الصورة بنجاح!');
+        }
+
+        // 📂 تحميل البيانات الموجودة
+        function loadExistingData() {
+            document.getElementById('companyName').value = localStorage.getItem('companyName') || 'KM Integrated Services';
+            document.getElementById('companyDescription').value = localStorage.getItem('companyDescription') || 'خبرة 8 سنوات في مصر - والآن في الإمارات العربية المتحدة';
+            updateGallery();
+        }
+
+        // 🚀 تهيئة الموقع عند التحميل
+        window.addEventListener('load', function() {
+            updateWebsite();
+            
+            // إعداد الفورم
+            document.getElementById('serviceForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('تم إرسال طلبك بنجاح! سنتواصل معك قريباً.');
+                this.reset();
+            });
+
+            // إدخال كلمة المرور عند الضغط على Enter
+            document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    login();
+                }
+            });
+        });
+
+        // منع النقر بزر الماوس الأيمن لحماية المحتوى
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // منع فحص الكود
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
